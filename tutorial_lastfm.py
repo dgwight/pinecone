@@ -24,20 +24,15 @@ def get_model() -> RecommenderBase:
         pickle.dump(model, embedding_cache_file)
     return model
 
-def embedding_from_string(userid) -> dict:
+def recommend_for(userid) -> str:
     ids, scores = get_model().recommend(userid, user_plays[userid], N=10, filter_already_liked_items=False)
     return pd.DataFrame({"artist": artists[ids], "score": scores, "already_liked": np.in1d(ids, user_plays[userid].indices)}).to_html()
 
-# # Use pandas to display the output in a table, pandas isn't a dependency of implicit otherwise
 
-# pd.DataFrame({"artist": artists[ids], "score": scores, "already_liked": np.in1d(ids, user_plays[userid].indices)})
-#
-# # get related items for the beatles (itemid = 25512)
-# ids, scores= model.similar_items(252512)
-#
-# # display the results using pandas for nicer formatting
-# pd.DataFrame({"artist": artists[ids], "score": scores})
-#
+def get_similar(itemid) -> str:
+    ids, scores = get_model().similar_items(itemid)
+    return pd.DataFrame({"artist": artists[ids], "score": scores}).to_html()
+
 # # Make recommendations for the first 1000 users in the dataset
 # userids = np.arange(1000)
 # ids, scores = model.recommend(userids, user_plays[userids])
