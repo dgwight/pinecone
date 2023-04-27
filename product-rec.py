@@ -79,7 +79,7 @@ model.fit(train_set, show_progress = True)
 # test_set = (test_set * alpha_val).astype('double')
 # evaluation.ranking_metrics_at_k(model, train_set.T, test_set.T, K=100,
 #                          show_progress=True, num_threads=1)
-#
+
 print(model.item_factors[1:3])
 
 
@@ -94,7 +94,7 @@ load_dotenv()
 # Load Pinecone API key
 api_key = os.getenv('PINECONE_API_KEY')
 # Set Pinecone environment.
-env = os.getenv('PINECONE_ENVIRONMENT') or 'YOUR_ENVIRONMENT'
+env = os.getenv('PINECONE_ENVIRONMENT')
 
 pinecone.init(api_key=api_key, environment=env)
 
@@ -115,6 +115,9 @@ all_items = [title for title in products_lookup['product_name']]
 # Transform items into factors
 items_factors = model.item_factors
 
+def display(data):
+    print(data)
+
 # Prepare item factors for upload
 items_to_insert = list(zip(all_items, items_factors[1:].tolist()))
 display(items_to_insert[:2])
@@ -127,7 +130,7 @@ def chunks(iterable, batch_size=100):
         chunk = tuple(itertools.islice(it, batch_size))
 
 
-print('Index statistics before upsert:', index.describe_index_stats())
+# print('Index statistics before upsert:', index.describe_index_stats())
 
 for e, batch in enumerate(chunks([(ii[:64],x) for ii,x in items_to_insert])):
     index.upsert(vectors=batch)
